@@ -1,0 +1,15 @@
+# Rename whichever definition you want to 'test'
+test:
+  :adapter: postgresql
+  :host: localhost
+  :database: load_model_test
+  :min_messages: ERROR
+# sqlite3:
+#   :adapter: sqlite3
+#   :dbfile: load_model.sqlite3.db
+# mysql:
+#   :adapter: mysql
+#   :host: localhost
+#   :username: rails
+#   :password:
+#   :database: load_model_test
