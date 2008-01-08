@@ -9,64 +9,73 @@ module Glomp #:nodoc:
     end
 
     module ClassMethods #:nodoc
-      # Loads an instance matching the model name with the result of searching 
-      # for an object against a model defined by the provided model name. The 
-      # parameter :id will be used by default. load_model will also require that 
-      # the value of the id be an integer.
-      #
+      # A glorified before_filter that loads an instance of an ActiveRecord 
+      # object as# the result of searching for said object against a model 
+      # defined by a given model name. The value of the HTTP request parameter 
+      # :id will be used as the default lookup value. LoadModel will require 
+      # that the value of the id be an integer as well as give you the ability 
+      # to require an instance be found and/or override several other default 
+      # behaviors.
+      # 
       # Example
-      #   load_model :silly_fellow
-      #   def action
-      #     @silly_fellow.do_something
-      #   end
-      #
-      # You can also require that a model instance be found for all actions or 
-      # given actions. Default behavior is to not require that a model instance 
-      # be found. When require is on and a record is not found, the 
-      # RequiredRecordNotFound Exception is thrown.
-      #
-      # To require for all actions, simply pass _true_ to <em>:require</em>
-      #
+      #   class SillyFellowController < Application
+      #     load_model :silly_fellow
+      #     def action
+      #       @silly_fellow.do_something
+      #     end
+      #   ens
+      # 
+      # You can require that a model instance be found for all actions or given 
+      # actions. Default behavior is to not require that a model instance be 
+      # found. When require is on and a record is not found, a 
+      # Glomp::RequiredRecordNotFound Exception is thrown.
+      # 
+      # To turn require on for all actions, simply pass _true_ to a provided
+      # <em>:require</em> attribute, like so:
+      # 
       # Example
       #   load_model :silly_fellow, :require => true
-      #
-      # To require for specific actions, pass an array of action names to 
-      # <em>:require</em>. The model will be loaded for all actions, regardless 
-      # of whether or not required is provided.
-      #
+      # 
+      # To turn require on for specific actions, pass an array of action names 
+      # to <em>:require</em>. The model will be loaded for all actions, 
+      # regardless of whether or not required is provided, but the exception 
+      # will only be raised when an record is not found for the provided 
+      # actions.
+      # 
       # Example
       #   load_model :silly_fellow, :require => [:show, :update]
-      #
-      # To use a different parameter key and Model than the default, you can 
-      # provide the values in the :paramater_key and :class options, like the
-      # following:
-      #
+      # 
+      # To use a different parameter key and model than the default, you can
+      # provide the values in the :paramater_key and :class options (though not
+      # necessary to provide them together), like the following:
+      # 
       # Example
-      #  load_model :foo, :class => :user, :parameter_key => :bar_id
-      #
+      #   load_model :foo, :class => :user, :parameter_key => :bar_id
+      # 
       # In the above example, _load_model_ will assume the parameter_key and the
-      # model's lookup key are both the same. For instance, the above example
-      # would result in a call like the following:
-      #
+      # model's primary/foreign key are both the same. For instance, the above 
+      # example would result in a call like the following:
+      # 
       #  @foo = User.find_by_bar_id(params[:bar_id])
-      #
-      # However, if you want to use a different lookup key, you can also provide
-      # that key name using the :foreign_key parameter; like so:
-      #
+      # 
+      # If you want to use a different lookup/foreign key than the default, you 
+      # can also provide that key name using the :foreign_key parameter; like 
+      # so:
+      # 
       # Example
-      #  load_model :foo, :class => :user, :parameter_key => :bar_id,
-      #    :foreign_key => :id
-      #
+      #   load_model :foo, :class => :user, :parameter_key => :bar_id,
+      #     :foreign_key => :baz_id
+      # 
       # Which would result in a call similar to the following:
-      #
-      #  @foo = User.find_by_id(params[:bar_id])
-      #
+      # 
+      #   @foo = User.find_by_baz_id(params[:bar_id])
+      # 
       # If you want to only use load_model for some actions, you can still name 
       # them as you would with a before_filter using :only or :except. If you 
-      # provide an :only and an :except value. :only will always win out over
+      # provide an :only and an :except value. :only will always win out over 
       # :except when there are collisions (i.e. you provide both in the same 
       # call)
-      #
+      # 
       # Example
       #  load_model :foo, :only => [:show]
       #  load_model :bar, :except => [:create]
