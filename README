@@ -1,5 +1,4 @@
-LoadModel
-=========
+= LoadModel
 
 A glorified before_filter that loads an instance of an ActiveRecord object as
 the result of searching for said object against a model defined by a given model
@@ -68,24 +67,24 @@ Example
  load_model :foo, :only => [:show]
  load_model :bar, :except => [:create]
 
-Requirements
-============
+== Installation
+
+./script/plugin install http://glomp.rubyforge.org/svn/plugins/load_model
+
+== Requirements
 
  1. Ruby 1.8.6 or higher
  2. Rails 1.2.6 or higher
 
-Acknowledgements
-================
+== Acknowledgements
 
 Anyone who developed, discussed, or any other way participated in REST
 technologies and Resources.
 
-Contact
-=======
+== Contact
 
 Justin Knowlden <justin@goglomp.net>
 
-License
-=======
+== License
 
 See MIT-LICENSE

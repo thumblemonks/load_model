@@ -1,6 +1,5 @@
-# LoadModel
 module Glomp #:nodoc:
-  module LoadModel #:nodoc
+  module LoadModel
 
     class RequiredRecordNotFound < Exception; end
 
