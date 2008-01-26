@@ -69,7 +69,7 @@ Example
 
 == Installation
 
-./script/plugin install http://glomp.rubyforge.org/svn/plugins/load_model
+  ./script/plugin install http://glomp.rubyforge.org/svn/plugins/load_model
 
 == Requirements
 
