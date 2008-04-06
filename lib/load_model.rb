@@ -110,8 +110,7 @@ module Glomp #:nodoc:
           action = action_name(controller)
           if processable?(action)
             key_value = controller.params[@param_key.to_sym]
-            # TODO: sanitize the lookup value perhaps
-            obj = @klass.send("find_by_#{@foreign_key}".to_sym, key_value)
+            obj = find_object(key_value)
             controller.instance_variable_set(@ivar, obj)
             if required?(action) && obj.nil?
               raise RequiredRecordNotFound
@@ -137,6 +136,15 @@ module Glomp #:nodoc:
 
         def required?(action)
           @requires == true || @requires.include?(action)
+        end
+        
+        def find_object(lookup_value)
+          # TODO: sanitize the lookup value perhaps
+          begin
+            @klass.send("find_by_#{@foreign_key}".to_sym, lookup_value)
+          rescue ActiveRecord::StatementInvalid
+            nil
+          end
         end
       end # ModelLoader
 
