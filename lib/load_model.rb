@@ -11,10 +11,9 @@ module Glomp #:nodoc:
       # A glorified before_filter that loads an instance of an ActiveRecord 
       # object as# the result of searching for said object against a model 
       # defined by a given model name. The value of the HTTP request parameter 
-      # :id will be used as the default lookup value. LoadModel will require 
-      # that the value of the id be an integer as well as give you the ability 
-      # to require an instance be found and/or override several other default 
-      # behaviors.
+      # :id will be used as the default lookup value. LoadModel will give you 
+      # the ability to require an instance be found and/or override several 
+      # other default behaviors.
       # 
       # Example
       #   class SillyFellowController < Application
@@ -111,11 +110,9 @@ module Glomp #:nodoc:
           action = action_name(controller)
           if processable?(action)
             key_value = controller.params[@param_key.to_sym]
-            obj = nil
-            if key_value.to_s =~ /^[0-9]+$/
-              obj = @klass.send("find_by_#{@foreign_key}".to_sym, key_value)
-              controller.instance_variable_set(@ivar, obj)
-            end
+            # TODO: sanitize the lookup value perhaps
+            obj = @klass.send("find_by_#{@foreign_key}".to_sym, key_value)
+            controller.instance_variable_set(@ivar, obj)
             if required?(action) && obj.nil?
               raise RequiredRecordNotFound
             end
