@@ -1,7 +1,7 @@
 module Glomp #:nodoc:
   module LoadModel
 
-    class RequiredRecordNotFound < Exception; end
+    class RequiredRecordNotFound < ActiveRecord::RecordNotFound; end
 
     def self.included(klass)
       klass.extend(ClassMethods)
