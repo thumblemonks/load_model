@@ -78,23 +78,24 @@ module Glomp #:nodoc:
       #   load_model :bar, :except => [:create]
       #
       # Finally, load_model supports a :through option. With :through, you can 
-      # load a model via the association of an existing loaded model.
+      # load a model via the association of an existing loaded model. This is
+      # especially useful for RESTful controllers.
       #
       # Example
-      #   load_model :user, :require => true
+      #   load_model :user, :require => true, :parameter_key => :user_id
       #   load_model :post, :through => :user
       #
       # In this example, a @post record will be loaded through the @user record
       # with essentially the following code:
       #
-      #   @user.posts.find_by_id(params[:post_id])
+      #   @user.posts.find_by_id(params[:id])
       #
       # All of the previously mentioned options still apply (:parameter_key, 
-      # :foreign_key, :require, :only, and :except). Meaning you could really 
-      # mess around.
+      # :foreign_key, :require, :only, and :except) except for the :class 
+      # option. Meaning you could really mess around!
       #
       # Example
-      #   load_model :user, :require => true
+      #   load_model :user, :require => true, :parameter_key => :user_id
       #   load_model :post, :through => :person, :parameter_key => :foo_id, 
       #     :foreign_key => :baz_id
       #
@@ -169,9 +170,8 @@ module Glomp #:nodoc:
       class ThroughModelLoader < ModelLoader #:nodoc
         attr_reader :load_through, :association
         def initialize(name, opts={})
-          config = {:parameter_key => "#{name}_id"}.merge(opts)
-          super(name, config)
-          @load_through = "@#{config[:through]}".to_sym
+          super(name, opts)
+          @load_through = "@#{opts[:through]}".to_sym
           @association = name.to_s.pluralize
         end
       private

@@ -13,7 +13,7 @@ class ThroughControllerTest < Test::Unit::TestCase
 
   context "index with valid ids" do
     setup do
-      get :index, :id => @user.id, :post_id => @post.id
+      get :index, :user_id => @user.id, :id => @post.id
     end
     
     should_assign_to :user, :equals => "@user"
@@ -22,7 +22,7 @@ class ThroughControllerTest < Test::Unit::TestCase
 
   context "index with invalid post id" do
     setup do
-      get :index, :id => @user.id, :post_id => -1
+      get :index, :user_id => @user.id, :id => -1
     end
     
     should_assign_to :user, :equals => "@user"
@@ -32,7 +32,7 @@ class ThroughControllerTest < Test::Unit::TestCase
   context "show with alternative post via weird_id" do
     context "has exisiting records" do
       setup do
-        get :show, :id => @user.id, :weird_id => @post.id
+        get :show, :user_id => @user.id, :weird_id => @post.id
       end
     
       should_assign_to :user, :equals => "@user"
@@ -42,7 +42,7 @@ class ThroughControllerTest < Test::Unit::TestCase
     context "has nonexistant records for required action" do
       should "flail with exception" do
         assert_raise(Glomp::LoadModel::RequiredRecordNotFound) do
-          get :show, :id => @user.id, :weird_id => -1
+          get :show, :user_id => @user.id, :weird_id => -1
         end
       end
     end # has nonexistant records for required action

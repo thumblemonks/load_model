@@ -65,7 +65,7 @@ class KeysController; def rescue_action(e) raise e end; end
 
 # Load model through existing model
 class ThroughController < ActionController::Base
-  load_model :user
+  load_model :user, :parameter_key => :user_id
   load_model :post, :through => :user, :except => [:show]
   # proving that except and only work
   load_model :post, :through => :user, :parameter_key => 'weird_id',
