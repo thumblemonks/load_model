@@ -15,20 +15,22 @@ class LoadModelTest < Test::Unit::TestCase
     User.delete_all
   end
 
-  def test_should_find_record_and_assign_to_instance_variable_if_param_provided
-    get :index, :id => @foo.id
-    assert_equal @foo.id, assigns(:user).id
-  end
+  context "when parameter" do
+    context "is provided" do
+      setup { get :index, :id => @foo.id }
+      should("find record") { assert_equal @foo.id, assigns(:user).id }
+    end # is provided
 
-  def test_should_return_nil_if_expected_param_not_provided
-    get :index
-    assert_nil assigns(:user)
-  end
+    context "is not provided" do
+      setup { get :index }
+      should("not assign any record") { assert_nil assigns(:user) }
+    end # is not provided
 
-  def test_should_return_nil_if_expected_param_does_not_match_record
-    get :index, :id => (@foo.id + 1) # Should not belong to an existing user
-    assert_nil assigns(:user)
-  end
+    context "does not match existing record" do
+      setup { get :index, :id => (@foo.id + 1) }
+      should("not assign any record") { assert_nil assigns(:user) }
+    end # does not match existing record
+  end # when parameter
 
   def test_should_find_record_with_alternate_id_as_expected_param_key
     alt = Alternate.create!(:name => 'Alternate', :alternate_id => 100)

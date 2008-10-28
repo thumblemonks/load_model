@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RestrictOptionsModelTest < Test::Unit::TestCase
+class RestrictOptionsControllerTest < Test::Unit::TestCase
 
   def setup
     super

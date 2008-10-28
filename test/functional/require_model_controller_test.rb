@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/controller_helper'
 
-class RequireModelLoadModelTest < Test::Unit::TestCase
+class RequireModelControllerTest < Test::Unit::TestCase
 
   def setup
     super

@@ -50,11 +50,11 @@ module Glomp #:nodoc:
       # Example
       #   load_model :foo, :class => :user, :parameter_key => :bar_id
       # 
-      # In the above example, _load_model_ will assume the parameter_key and the
-      # model's primary/foreign key are both the same. For instance, the above 
-      # example would result in a call like the following:
+      # In the above example, _load_model_ will assume the parameter_key is 
+      # :bar_id while assuming the model's primary/foreign is still :id. For 
+      # instance, the above example would result in a call like the following:
       # 
-      #  @foo = User.find_by_bar_id(params[:bar_id])
+      #  @foo = User.find_by_id(params[:bar_id])
       # 
       # If you want to use a different lookup/foreign key than the default, you 
       # can also provide that key name using the :foreign_key parameter; like 
@@ -70,90 +70,130 @@ module Glomp #:nodoc:
       # 
       # If you want to only use load_model for some actions, you can still name 
       # them as you would with a before_filter using :only or :except. If you 
-      # provide an :only and an :except value. :only will always win out over 
-      # :except when there are collisions (i.e. you provide both in the same 
-      # call)
+      # provide an :only and an :except value. :except will always win out over 
+      # :only in the event of a collision.
       # 
       # Example
-      #  load_model :foo, :only => [:show]
-      #  load_model :bar, :except => [:create]
+      #   load_model :foo, :only => [:show]
+      #   load_model :bar, :except => [:create]
+      #
+      # Finally, load_model supports a :through option. With :through, you can 
+      # load a model via the association of an existing loaded model.
+      #
+      # Example
+      #   load_model :user, :require => true
+      #   load_model :post, :through => :user
+      #
+      # In this example, a @post record will be loaded through the @user record
+      # with essentially the following code:
+      #
+      #   @user.posts.find_by_id(params[:post_id])
+      #
+      # All of the previously mentioned options still apply (:parameter_key, 
+      # :foreign_key, :require, :only, and :except). Meaning you could really 
+      # mess around.
+      #
+      # Example
+      #   load_model :user, :require => true
+      #   load_model :post, :through => :person, :parameter_key => :foo_id, 
+      #     :foreign_key => :baz_id
+      #
+      # Would result in a call similar to the following:
+      #
+      #   @person.posts.find_by_baz_id(params[:foo_id])
+      #
+      # Require works as you would expect
+      #
+      # The only current caveat is that load_model assumes a has_many 
+      # association exists on the :through model and is named in the pluralized 
+      # form. In essence, in the above example, there is no way to tell 
+      # load_model not look for the "posts" association. Perhaps a future 
+      # change.
       #
       def load_model(name, opts={})
         unless loaders
-          self.class_eval do
-            before_filter :glomp_load_model_runner
-          end
+          self.class_eval { before_filter :glomp_load_model_runner }
           write_inheritable_attribute(:loaders, [])
         end
-        loaders << ModelLoader.new(name, opts)
+        loader = opts[:through] ? ThroughModelLoader : ModelLoader
+        loaders << loader.new(name, opts)
       end
 
-      def loaders
-        self.read_inheritable_attribute(:loaders)
-      end
+      def loaders; self.read_inheritable_attribute(:loaders); end
 
       class ModelLoader #:nodoc
+        attr_reader :assigns_to, :load_through, :parameter_key, :foreign_key,
+          :except, :only, :requires
+
         def initialize(name, opts={})
           config = {:require => false, :parameter_key => :id,
-            :class => name}.merge(opts)
-          config[:foreign_key] ||= config[:parameter_key]
-          @ivar = "@#{name}".to_sym
-          @klass = config[:class].to_s.classify.constantize
-          @param_key = config[:parameter_key].to_s
+            :foreign_key => :id, :class => name}.merge(opts)
+          @assigns_to = "@#{name}".to_sym
+          @load_through = config[:class].to_s.classify.constantize
+          @parameter_key = config[:parameter_key].to_s
           @foreign_key = config[:foreign_key].to_s
           @requires = parse_required_actions(config[:require])
-          @except = opts[:except].to_a.map{|a| a.to_s}
-          @only = opts[:only].to_a.map{|a| a.to_s} #- @except
+          @except = stringify_array(config[:except])
+          @only = stringify_array(config[:only])
         end
 
-        def process(controller)
-          action = action_name(controller)
-          if processable?(action)
-            key_value = controller.params[@param_key.to_sym]
-            obj = find_object(key_value)
-            controller.instance_variable_set(@ivar, obj)
-            if required?(action) && obj.nil?
-              raise RequiredRecordNotFound
-            end
-          end
-        end
-      private
-        def parse_required_actions(requires)
-          requires = nil if requires == false
-          requires = requires.to_a.map {|a| a.to_s} unless requires == true
-          requires
+        def action_allowed?(action)
+          return false if except.include?(action)
+          only.empty? ? true : only.include?(action)
         end
 
-        def action_name(controller)
-          controller.action_name
-        end
-
-        def processable?(action)
-          processable = !@except.include?(action)
-          processable = @only.include?(action) unless @only.empty?
-          processable
-        end
-
-        def required?(action)
-          @requires == true || @requires.include?(action)
+        def action_required?(action)
+          requires == true || requires.include?(action)
         end
         
-        def find_object(lookup_value)
-          # TODO: sanitize the lookup value perhaps
+        def load_model(controller)
           begin
-            @klass.send("find_by_#{@foreign_key}".to_sym, lookup_value)
+            lookup = parameter_value(controller)
+            source(controller).send("find_by_#{foreign_key}", lookup)
           rescue ActiveRecord::StatementInvalid
             nil
           end
         end
+      private
+        def source(controller) load_through; end
+
+        def parse_required_actions(actions)
+          actions == true ? true : stringify_array(actions)
+        end
+
+        def parameter_value(controller) controller.params[parameter_key]; end
+
+        def stringify_array(value) Array(value).map(&:to_s); end
       end # ModelLoader
+
+      class ThroughModelLoader < ModelLoader #:nodoc
+        attr_reader :load_through, :association
+        def initialize(name, opts={})
+          config = {:parameter_key => "#{name}_id"}.merge(opts)
+          super(name, config)
+          @load_through = "@#{config[:through]}".to_sym
+          @association = name.to_s.pluralize
+        end
+      private
+        def source(controller)
+          controller.instance_variable_get(load_through).send(association)
+        end
+      end # ThroughModelLoader
 
     end # ClassMethods
 
   private
 
     def glomp_load_model_runner
-      self.class.loaders.each { |loader| loader.process(self) }
+      self.class.loaders.each do |loader|
+        if loader.action_allowed?(action_name)
+          obj = loader.load_model(self)
+          if obj.nil? && loader.action_required?(action_name)
+            raise RequiredRecordNotFound
+          end
+          instance_variable_set(loader.assigns_to, obj)
+        end
+      end
     end
 
   end # LoadModel
