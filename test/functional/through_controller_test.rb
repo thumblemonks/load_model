@@ -20,6 +20,16 @@ class ThroughControllerTest < Test::Unit::TestCase
     should_assign_to :post, :equals => "@post"
   end # with valid ids
 
+  context "show_unpublished with valid id" do
+    setup do
+      @unpublished_post = @user.posts.create!{ |p| p.published = false }
+      get :show_unpublished, :user_id => @user.id, :id => @unpublished_post.id
+    end
+    
+    should_assign_to :user, :equals => "@user"
+    should_assign_to :post, :equals => "@post"
+  end
+  
   context "index with invalid post id" do
     setup do
       get :index, :user_id => @user.id, :id => -1
@@ -39,7 +49,7 @@ class ThroughControllerTest < Test::Unit::TestCase
       should_assign_to :post, :equals => "@post"
     end # has existing records
 
-    context "has nonexistant records for required action" do
+    context "has nonexistent records for required action" do
       should "flail with exception" do
         assert_raise(Glomp::LoadModel::RequiredRecordNotFound) do
           get :show, :user_id => @user.id, :weird_id => -1

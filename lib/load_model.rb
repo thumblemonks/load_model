@@ -172,7 +172,7 @@ module Glomp #:nodoc:
         def initialize(name, opts={})
           super(name, opts)
           @load_through = "@#{opts[:through]}".to_sym
-          @association = name.to_s.pluralize
+          @association = opts[:association] || name.to_s.pluralize
         end
       private
         def source(controller)

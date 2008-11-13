@@ -71,7 +71,12 @@ class ThroughController < ActionController::Base
   load_model :post, :through => :user, :parameter_key => 'weird_id',
     :require => true, :only => [:show]
 
+  load_model :post, :through => :user, :association => :unpublished_posts,
+    :require => true, :only => [:show_unpublished]
+      
   def index; render :text => 'index'; end
   def show; render :text => 'show'; end
+  def show_unpublished; render :text => 'unpublished'; end
+  
 end
 class ThroughController; def rescue_action(e) raise e end; end

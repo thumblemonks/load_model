@@ -4,7 +4,8 @@ require 'test_help'
 load(File.dirname(__FILE__) + "/../db/schema.rb")
 
 class User < ActiveRecord::Base
-  has_many :posts
+  has_many :posts, :conditions => {:published => true}
+  has_many :unpublished_posts, :conditions => {:published => false}, :class_name => 'Post'
 end
 class Post < ActiveRecord::Base
   belongs_to :user
