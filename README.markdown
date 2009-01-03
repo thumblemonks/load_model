@@ -55,7 +55,7 @@ Example
 
 ## Installation
 
-      ./script/plugin install git://github.com/glomp/load_model.git
+      ./script/plugin install git://github.com/thumblemonks/load_model.git
 
 ## Requirements
 
@@ -68,7 +68,7 @@ Anyone who developed, discussed, or any other way participated in HTTP, REST, an
 
 ## Contact
 
-Justin Knowlden <justin@goglomp.net>
+Justin Knowlden <gus@gusg.us>
 
 ## License
 
