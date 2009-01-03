@@ -1,4 +1,4 @@
-module Glomp #:nodoc:
+module ThumbleMonks #:nodoc:
   module LoadModel
 
     class RequiredRecordNotFound < ActiveRecord::RecordNotFound; end
@@ -26,7 +26,8 @@ module Glomp #:nodoc:
       # You can require that a model instance be found for all actions or given 
       # actions. Default behavior is to not require that a model instance be 
       # found. When require is on and a record is not found, a 
-      # Glomp::RequiredRecordNotFound Exception is thrown.
+      # ThumbleMonks::RequiredRecordNotFound Exception is thrown; which does
+      # nicely extend ActiveRecord::RecordNotFound.
       # 
       # To turn require on for all actions, simply pass _true_ to a provided
       # <em>:require</em> attribute, like so:
@@ -197,4 +198,6 @@ module Glomp #:nodoc:
     end
 
   end # LoadModel
-end # Glomp
+end # ThumbleMonks
+
+ActionController::Base.send(:include, ThumbleMonks::LoadModel)

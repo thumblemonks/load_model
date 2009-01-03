@@ -51,7 +51,7 @@ class ThroughControllerTest < Test::Unit::TestCase
 
     context "has nonexistent records for required action" do
       should "flail with exception" do
-        assert_raise(Glomp::LoadModel::RequiredRecordNotFound) do
+        assert_raise(ThumbleMonks::LoadModel::RequiredRecordNotFound) do
           get :show, :user_id => @user.id, :weird_id => -1
         end
       end

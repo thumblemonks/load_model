@@ -31,13 +31,13 @@ class RequireModelControllerTest < Test::Unit::TestCase
 
   def test_should_raise_error_if_required_is_scoped_and_record_not_found
     fuzz = Fuzzle.create!(:name => 'Fuzzy', :fuzzle_id => 200)
-    assert_raise(Glomp::LoadModel::RequiredRecordNotFound) do
+    assert_raise(ThumbleMonks::LoadModel::RequiredRecordNotFound) do
       get :newer, :id => @foo.id, :fuzzle_id => (fuzz.id + 1)
     end
   end
 
   def test_should_raise_error_if_required_is_true_and_record_not_found
-    assert_raise(Glomp::LoadModel::RequiredRecordNotFound) do
+    assert_raise(ThumbleMonks::LoadModel::RequiredRecordNotFound) do
       get :new, :id => (@foo.id + 1)
     end
   end
