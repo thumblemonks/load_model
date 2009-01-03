@@ -68,5 +68,4 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
 end
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'init'))
 require 'ruby-debug'

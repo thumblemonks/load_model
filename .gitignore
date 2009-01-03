@@ -1,2 +1,2 @@
-log/*
-db/*
+rails/log/*
+rails/db/*.db

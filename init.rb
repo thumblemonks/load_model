@@ -1,2 +1,0 @@
-require 'load_model'
-

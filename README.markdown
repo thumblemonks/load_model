@@ -1,4 +1,4 @@
-# LoadModel
+# Load Model
 
 A glorified before_filter that loads an instance of an `ActiveRecord` object as the result of searching for said object against a model defined by a given model name. The value of the HTTP request parameter `:id` will be used as the default lookup value. `LoadModel` will give you the ability to require an instance be found and/or override several other default behaviors.
 
@@ -11,7 +11,7 @@ Example
         end
       end
 
-You can require that a model instance be found for all actions or given actions. Default behavior is to not require that a model instance be found. When require is on and a record is not found, a `Glomp::RequiredRecordNotFound` Exception is thrown.
+You can require that a model instance be found for all actions or given actions. Default behavior is to not require that a model instance be found. When require is on and a record is not found, a `ThumbleMonks::RequiredRecordNotFound` Exception is thrown; which extends from ActiveRecord::RecordNotFound, for your convenience.
 
 To turn require on for all actions, simply pass *true* to a provided `:require` attribute, like so:
 
@@ -60,7 +60,7 @@ Example
 ## Requirements
 
 1. Ruby 1.8.6 or higher
-2. Rails 1.2.6 or higher
+2. Rails 2.x or higher
 
 ## Acknowledgements
 
