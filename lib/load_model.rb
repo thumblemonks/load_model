@@ -27,7 +27,7 @@ module ThumbleMonks #:nodoc:
       # actions. Default behavior is to not require that a model instance be 
       # found. When require is on and a record is not found, a 
       # ThumbleMonks::RequiredRecordNotFound Exception is thrown; which does
-      # nicely extend ActiveRecord::RecordNotFound.
+      # conveniently extend ActiveRecord::RecordNotFound.
       # 
       # To turn require on for all actions, simply pass _true_ to a provided
       # <em>:require</em> attribute, like so:
@@ -114,11 +114,10 @@ module ThumbleMonks #:nodoc:
       #
       def load_model(name, opts={})
         unless loaders
-          self.class_eval { before_filter :glomp_load_model_runner }
+          self.class_eval { before_filter :load_specified_models }
           write_inheritable_attribute(:loaders, [])
         end
-        loader = opts[:through] ? ThroughModelLoader : ModelLoader
-        loaders << loader.new(name, opts)
+        loaders << (opts[:through] ? ThroughModelLoader : ModelLoader).new(name, opts)
       end
 
       def loaders; self.read_inheritable_attribute(:loaders); end
@@ -185,7 +184,7 @@ module ThumbleMonks #:nodoc:
 
   private
 
-    def glomp_load_model_runner
+    def load_specified_models
       self.class.loaders.each do |loader|
         if loader.action_allowed?(action_name)
           obj = loader.load_model(self)

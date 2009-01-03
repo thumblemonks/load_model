@@ -1,2 +1,2 @@
 rails/log/*
-rails/db/*.db
+rails/**/*.db
