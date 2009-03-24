@@ -17,6 +17,8 @@ class User < ActiveRecord::Base
 end
 class Post < ActiveRecord::Base
   belongs_to :user
+  
+  def foo; "bar"; end
 end
 class Alternate < ActiveRecord::Base; end
 class Fuzzle < ActiveRecord::Base; end
