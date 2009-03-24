@@ -78,7 +78,9 @@ module ThumbleMonks #:nodoc:
       #   load_model :foo, :only => [:show]
       #   load_model :bar, :except => [:create]
       #
-      # Finally, load_model supports a :through option. With :through, you can 
+      # == Through
+      #
+      # Load Model supports a :through option. With :through, you can 
       # load a model via the association of an existing loaded model. This is
       # especially useful for RESTful controllers.
       #
@@ -104,20 +106,48 @@ module ThumbleMonks #:nodoc:
       #
       #   @person.posts.find_by_baz_id(params[:foo_id])
       #
-      # Require works as you would expect
+      # Require works as you would expect.
       #
-      # The only current caveat is that load_model assumes a has_many 
-      # association exists on the :through model and is named in the pluralized 
-      # form. In essence, in the above example, there is no way to tell 
-      # load_model not look for the "posts" association. Perhaps a future 
-      # change.
+      # If you would like load_model to not assume a pluralized association
+      # name, you can provide the association name with the :association
+      # option. Like so:
       #
+      # Example
+      #   class Person < ActiveRecord::Base
+      #     has_many :blog_postings
+      #   end
+      #   class PostController < ActionController::Base
+      #     load_model :post, :through => :person, :assocation => :blog_postings
+      #   end
+      #
+      # == From
+      #
+      # Perhaps you don't need to do a subquery on a model's association and
+      # you just need to load a model from another's belongs_to or has_one
+      # association. This would be impossible in the above example. Instead,
+      # will want to use the :from option. Like so:
+      #
+      # Example
+      #   class Post < ActiveRecord::Base
+      #     belongs_to :user
+      #   end
+      #   class PostController < ActionController::Base
+      #     load_model :post
+      #     load_model :user, :from => :post
+      #   end
+      #
+      # The example is contrived, but you get the point. Essentially, this
+      # would do the same as writing the following code:
+      #
+      # Example
+      #   @post = Post.find_by_id(params[:id])
+      #   @user = @post.user
       def load_model(name, opts={})
         unless loaders
           self.class_eval { before_filter :load_specified_models }
           write_inheritable_attribute(:loaders, [])
         end
-        loaders << (opts[:through] ? ThroughModelLoader : ModelLoader).new(name, opts)
+        loaders << loader_class(opts).new(name, opts)
       end
 
       def loaders; self.read_inheritable_attribute(:loaders); end
@@ -180,10 +210,27 @@ module ThumbleMonks #:nodoc:
         end
       end # ThroughModelLoader
 
+      class FromModelLoader < ModelLoader #:nodoc
+        attr_reader :load_from, :association
+        def initialize(name, opts={})
+          super(name, opts)
+          @load_from = "@#{opts[:from]}".to_sym
+          @association = name.to_s
+        end
+
+        def load_model(controller)
+          controller.instance_variable_get(load_from).send(association)
+        end
+      end # FromModelLoader
+    private
+      def loader_class(opts)
+        return ThroughModelLoader if opts[:through]
+        return FromModelLoader if opts[:from]
+        ModelLoader
+      end
     end # ClassMethods
 
   private
-
     def load_specified_models
       self.class.loaders.each do |loader|
         if loader.action_allowed?(action_name)
@@ -194,8 +241,7 @@ module ThumbleMonks #:nodoc:
           instance_variable_set(loader.assigns_to, obj)
         end
       end
-    end
-
+    end # load_specified_models
   end # LoadModel
 end # ThumbleMonks
 
