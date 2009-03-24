@@ -1,9 +1,9 @@
 ENV["RAILS_ENV"] = "test"
-ENV["RAILS_ROOT"] = File.expand_path(File.join(File.dirname(__FILE__), '..', 'rails'))
+ENV["RAILS_ROOT"] = File.expand_path(File.join(File.dirname(__FILE__), '..', 'test', 'rails'))
 require File.expand_path(File.join(ENV["RAILS_ROOT"], 'config', 'environment'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'load_model'))
 require 'test_help'
-load(File.dirname(__FILE__) + "/../rails/db/schema.rb")
+load(File.join(ENV["RAILS_ROOT"], "db", "schema.rb"))
 
 class User < ActiveRecord::Base
   has_many :posts, :conditions => {:published => true}
