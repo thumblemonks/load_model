@@ -16,8 +16,8 @@ class ThroughControllerTest < Test::Unit::TestCase
       get :index, :user_id => @user.id, :id => @post.id
     end
     
-    should_assign_to :user, :equals => "@user"
-    should_assign_to :post, :equals => "@post"
+    should_assign_to(:user) { @user }
+    should_assign_to(:post) { @post }
   end # with valid ids
 
   context "show_unpublished with valid id" do
@@ -26,8 +26,8 @@ class ThroughControllerTest < Test::Unit::TestCase
       get :show_unpublished, :user_id => @user.id, :id => @unpublished_post.id
     end
     
-    should_assign_to :user, :equals => "@user"
-    should_assign_to :post, :equals => "@post"
+    should_assign_to(:user) { @user }
+    should_assign_to(:post) { @unpublished_post }
   end
   
   context "index with invalid post id" do
@@ -35,7 +35,7 @@ class ThroughControllerTest < Test::Unit::TestCase
       get :index, :user_id => @user.id, :id => -1
     end
     
-    should_assign_to :user, :equals => "@user"
+    should_assign_to(:user) { @user }
     should_not_assign_to :post
   end # with invalid post id
 
@@ -45,8 +45,8 @@ class ThroughControllerTest < Test::Unit::TestCase
         get :show, :user_id => @user.id, :weird_id => @post.id
       end
     
-      should_assign_to :user, :equals => "@user"
-      should_assign_to :post, :equals => "@post"
+      should_assign_to(:user) { @user }
+      should_assign_to(:post) { @post }
     end # has existing records
 
     context "has nonexistent records for required action" do
