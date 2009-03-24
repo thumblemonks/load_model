@@ -1,12 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class KeysControllerTest < Test::Unit::TestCase
+class KeysControllerTest < ActionController::TestCase
 
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = KeysController.new
     @user = User.create!(:name => 'Foo')
     @fuzzler = Fuzzle.create!(:name => 'Bar', :fuzzle_id => 300)
   end

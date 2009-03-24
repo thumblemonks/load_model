@@ -1,18 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class LoadModelTest < Test::Unit::TestCase
-
+class BasicControllerTest < ActionController::TestCase
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = BasicController.new
     @foo = User.create!(:name => 'Foo')
-  end
-
-  def teardown
-    Alternate.delete_all
-    User.delete_all
   end
 
   context "when parameter" do
@@ -81,5 +71,4 @@ class LoadModelTest < Test::Unit::TestCase
     get :index, :id => 'abc'
     assert_nil assigns(:user)
   end
-
 end

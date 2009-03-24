@@ -1,12 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RestrictOptionsControllerTest < Test::Unit::TestCase
-
+class RestrictOptionsControllerTest < ActionController::TestCase
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = RestrictOptionsController.new
     @foo = User.create!(:name => 'Foo')
     @alt = Alternate.create!(:name => 'Bar', :alternate_id => 100)
   end
@@ -30,5 +25,4 @@ class RestrictOptionsControllerTest < Test::Unit::TestCase
     get :show, :id => @foo.id, :alternate_id => @alt.alternate_id
     assert_nil assigns(:user)
   end
-
 end

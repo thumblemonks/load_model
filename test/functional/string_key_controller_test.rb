@@ -1,13 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/controller_helper'
 
-class StringKeyLoadModelTest < Test::Unit::TestCase
-
+class StringKeyControllerTest < ActionController::TestCase
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = StringKeyController.new
     @foo = User.create!(:name => 'Foo')
   end
 
@@ -48,5 +42,4 @@ class StringKeyLoadModelTest < Test::Unit::TestCase
     get :index, :id => (@foo.id + 1)
     assert_nil assigns(:chameleon)
   end
-
 end

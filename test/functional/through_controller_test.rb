@@ -1,12 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/controller_helper'
 
-class ThroughControllerTest < Test::Unit::TestCase
+class ThroughControllerTest < ActionController::TestCase
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = ThroughController.new
     @user = User.create!(:name => 'Foo')
     @post = @user.posts.create!(:name => 'Foo post')
   end
@@ -57,5 +52,4 @@ class ThroughControllerTest < Test::Unit::TestCase
       end
     end # has nonexistant records for required action
   end # show with alternative post via weird_id
-
 end

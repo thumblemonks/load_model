@@ -1,13 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/controller_helper'
 
-class RequireModelControllerTest < Test::Unit::TestCase
-
+class RequireModelControllerTest < ActionController::TestCase
   def setup
-    super
-    @request = ActionController::TestRequest.new
-    @response = ActionController::TestResponse.new
-    @controller = RequireModelController.new
     @foo = User.create!(:name => 'Foo')
   end
 
@@ -41,5 +35,4 @@ class RequireModelControllerTest < Test::Unit::TestCase
       get :new, :id => (@foo.id + 1)
     end
   end
-
 end
