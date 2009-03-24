@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "load_model"
-  s.version  = "0.2.2"
+  s.version  = "0.2.1"
   s.date     = "2009-03-24"
   s.summary  = "Rails Controller plugin that provides easy and useful macros for tying models and requests together"
   s.email    = %w[gus@gusg.us gabriel.gironda@gmail.com]
@@ -25,26 +25,25 @@ Gem::Specification.new do |s|
     README.markdown
     Rakefile
     lib/load_model.rb
+    lib/thumblemonks/model_loader.rb
     load_model.gemspec
   ]
   
   s.test_files = %w[
-    rails/app/controllers/application.rb
-    rails/config/boot.rb
-    rails/config/database.yml
-    rails/config/environment.rb
-    rails/config/environments/test.rb
-    rails/config/routes.rb
-    rails/db/schema.rb
-    rails/db/test.db
-    rails/log/test.log
-    test/functional/controller_helper.rb
+    test/functional/basic_controller_test.rb
+    test/functional/from_controller_test.rb
     test/functional/keys_controller_test.rb
-    test/functional/load_model_test.rb
     test/functional/require_model_controller_test.rb
     test/functional/restrict_options_controller_test.rb
-    test/functional/string_key_load_model_test.rb
+    test/functional/string_key_controller_test.rb
     test/functional/through_controller_test.rb
+    test/rails/app/controllers/application.rb
+    test/rails/config/boot.rb
+    test/rails/config/database.yml
+    test/rails/config/environment.rb
+    test/rails/config/environments/test.rb
+    test/rails/config/routes.rb
+    test/rails/db/schema.rb
     test/test_helper.rb
   ]
 
