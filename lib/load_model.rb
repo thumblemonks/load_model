@@ -9,7 +9,7 @@ module ThumbleMonks #:nodoc:
 
     module ClassMethods #:nodoc
       # A glorified before_filter that loads an instance of an ActiveRecord 
-      # object as# the result of searching for said object against a model 
+      # object as the result of searching for said object against a model 
       # defined by a given model name. The value of the HTTP request parameter 
       # :id will be used as the default lookup value. LoadModel will give you 
       # the ability to require an instance be found and/or override several 
