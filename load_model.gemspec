@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "load_model"
-  s.version  = "0.2.1"
+  s.version  = "0.2.2"
   s.date     = "2009-03-24"
   s.summary  = "Rails Controller plugin that provides easy and useful macros for tying models and requests together"
   s.email    = %w[gus@gusg.us gabriel.gironda@gmail.com]
