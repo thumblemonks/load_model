@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name     = "thumblemonks-load_model"
+  s.name     = "load_model"
   s.version  = "0.2.2"
   s.date     = "2009-06-03"
   s.summary  = "Rails Controller plugin that provides easy and useful macros for tying models and requests together"
