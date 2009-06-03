@@ -67,4 +67,14 @@ class ThroughControllerTest < ActionController::TestCase
       end
     end # has nonexistant records for required action
   end # show with alternative post via weird_id
+
+  context "when parameter value is nil" do
+    setup do
+      Post.expects(:find_by_id).never
+      get :index, :user_id => @user.id, :id => ''
+    end
+
+    should_assign_to(:user) { @user }
+    should_not_assign_to(:post)
+  end # when parameter value is nil
 end

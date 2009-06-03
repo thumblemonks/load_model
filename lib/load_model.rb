@@ -165,9 +165,7 @@ module ThumbleMonks #:nodoc:
       self.class.loaders.each do |loader|
         if loader.action_allowed?(action_name)
           obj = loader.load_model(self)
-          if obj.nil? && loader.action_required?(action_name)
-            raise RequiredRecordNotFound
-          end
+          raise RequiredRecordNotFound if obj.nil? && loader.action_required?(action_name)
           instance_variable_set(loader.assigns_to, obj)
         end
       end

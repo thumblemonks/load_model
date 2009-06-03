@@ -34,53 +34,57 @@ class BasicControllerTest < ActionController::TestCase
     end # does not match existing record
   end # when parameter
 
-  def test_should_find_record_with_alternate_id_as_expected_param_key
-    alt = Alternate.create!(:name => 'Alternate', :alternate_id => 100)
-    get :index, :alternate_id => alt.alternate_id
-    assert_equal alt.id, assigns(:alternate).id
-    assert_equal alt.alternate_id, assigns(:alternate).alternate_id
-  end
-
-  def test_should_find_nothing_when_alternate_id_does_not_match_record
-    alt = Alternate.create!(:name => 'Alternate', :alternate_id => 99)
-    get :index, :alternate_id => 100
-    assert_nil assigns(:alternate)
-  end
-
-  def test_should_find_chameleon_in_user_table
+  should "find chameleon in users" do
     get :index, :id => @foo.id
     assert_equal @foo.id, assigns(:chameleon).id
   end
 
-  def test_should_not_find_chameleon_in_user_table_with_nonexistent_id
+  should "not find chameleon in users with nonexistent id" do
     get :index, :id => (@foo.id + 1)
     assert_nil assigns(:chameleon)
   end
 
-  def test_should_find_flamingo_in_user_table_even_when_class_name_is_constant
-    get :index, :id => @foo.id
-    assert_equal @foo.id, assigns(:flamingo).id
-  end
-
-  def test_should_not_find_flamingo_in_user_table_when_class_name_is_constant
-    get :index, :id => (@foo.id + 1)
-    assert_nil assigns(:flamingo)
-  end
-
-  def test_should_find_tucan_in_users_with_alternate_class_and_key
-    alt = Alternate.create!(:name => 'Alternate', :alternate_id => 100)
-    get :index, :alternate_id => alt.alternate_id
-    assert_equal alt.id, assigns(:tucan).id
-  end
-
-  def test_should_not_find_tucan_in_users_with_alternate_class_and_key
-    alt = Alternate.create!(:name => 'Alternate', :alternate_id => 100)
-    get :index, :alternate_id => (alt.alternate_id + 1)
-    assert_nil assigns(:tucan)
-  end
-
-  def test_should_not_find_record_if_key_value_is_not_an_integer
+  should "not find record if key value is not an integer" do
     get :index, :id => 'abc'
     assert_nil assigns(:user)
   end
+
+  context "when class name is constant" do
+    should "find flamingo in user table" do
+      get :index, :id => @foo.id
+      assert_equal @foo.id, assigns(:flamingo).id
+    end
+
+    should "not find flamingo in user table" do
+      get :index, :id => (@foo.id + 1)
+      assert_nil assigns(:flamingo)
+    end
+  end # when class name is constant
+
+  context "for alternate" do
+    context "with existing id" do
+      setup do
+        @alt = Alternate.create!(:name => 'Alternate', :alternate_id => 100)
+        get :index, :alternate_id => @alt.alternate_id
+      end
+
+      should_assign_to(:alternate) { @alt }
+      should_assign_to(:tucan) { @alt }
+    end
+
+    context "with non-existant id" do
+      setup { get :index, :alternate_id => 99 }
+      should_not_assign_to(:alternate)
+      should_not_assign_to(:tucan)
+    end
+  end # with alternate class and key
+
+  context "when id is nil for users" do
+    setup do
+      User.expects(:find_by_id).never
+      get :index, :id => ''
+    end
+  
+    should_not_assign_to(:user)
+  end # when parameter value is nil
 end

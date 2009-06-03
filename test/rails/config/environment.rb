@@ -6,11 +6,10 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.gem 'thoughtbot-shoulda', :lib => 'shoulda/rails', :source => 'http://gems.github.com'
+  config.gem 'mocha'
 
   config.action_controller.session = {
     :session_key => '_load_model_session',
     :secret      => '9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd9908cd'
   }
 end
-
-require 'ruby-debug'

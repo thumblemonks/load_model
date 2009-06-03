@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
-  s.name     = "load_model"
-  s.version  = "0.2.1"
-  s.date     = "2009-03-24"
+  s.name     = "thumblemonks-load_model"
+  s.version  = "0.2.2"
+  s.date     = "2009-06-03"
   s.summary  = "Rails Controller plugin that provides easy and useful macros for tying models and requests together"
   s.email    = %w[gus@gusg.us gabriel.gironda@gmail.com]
   s.homepage = "http://github.com/thumblemonks/load_model"
   s.description = "Rails Controller plugin that provides easy and useful macros for tying models and requests together"
-  s.authors  = %w[Justin\ Knowlden Gabriel\ Gironda]
+  s.authors  = %w[Justin\ Knowlden Gabriel\ Gironda Dan\ Hodos]
 
   s.rubyforge_project = %q{load_model}
 

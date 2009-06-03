@@ -32,6 +32,10 @@ module ThumbleMonks #:nodoc:
     def parameter_value(controller) controller.params[parameter_key]; end
 
     def stringify_array(value) Array(value).map(&:to_s); end
+    
+    def retrieve_association_through(controller, instance_variable_name)
+      controller.instance_variable_get(instance_variable_name).send(@association)
+    end
   end # ModelLoader
 
   class AssociativeModelLoader < ModelLoader #:nodoc
@@ -48,7 +52,7 @@ module ThumbleMonks #:nodoc:
     def load_model(controller)
       begin
         lookup = parameter_value(controller)
-        source(controller).send("find_by_#{foreign_key}", lookup)
+        source(controller).send("find_by_#{foreign_key}", lookup) unless lookup.blank?
       rescue ActiveRecord::StatementInvalid
         nil
       end
@@ -67,7 +71,7 @@ module ThumbleMonks #:nodoc:
     end
   private
     def source(controller)
-      controller.instance_variable_get(load_through).send(@association)
+      retrieve_association_through(controller, load_through)
     end
   end # ThroughModelLoader
 
@@ -79,7 +83,7 @@ module ThumbleMonks #:nodoc:
     end
 
     def load_model(controller)
-      controller.instance_variable_get(@load_from).send(@association)
+      retrieve_association_through(controller, @load_from)
     end
   end # FromModelLoader
 
